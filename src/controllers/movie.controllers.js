@@ -179,15 +179,19 @@ export const updateMovie = async (req, res) => {
                 director,
                 duration,
                 genre,
-                description
-            });
-            res.status(200).json({
+                description},{
+                    where: {
+                        id
+                    }
+                }
+            );
+            return res.status(200).json({
                 messsage: 'Pelicula actualizada',
                 movie
             });
         }
     } catch (err) {
-        console.error('Error interno del servidor al intentar actualizar un personaje')
+        console.error('Error interno del servidor al intentar actualizar un personaje', err)
         return res.status(500).json({
             message: 'Error del servidor'
         });
