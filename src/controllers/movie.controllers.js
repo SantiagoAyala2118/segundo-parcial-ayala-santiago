@@ -92,7 +92,7 @@ export const getOneMovie = async (req, res) => {
                 message: 'Pelicula encontrado',
                 movie
             });
-        }
+        };
         return res.status(400).json({
             message: 'Esa pelicula no está en la base de datos'
         });
@@ -108,7 +108,63 @@ export const getOneMovie = async (req, res) => {
 
 export const updateMovie = async (req, res) => {
     try {
+        const {id} = req.params.id
+        const {title, director, duration, genre, description } = req.body;
         
+        const movie = await Movie.findByPk(id);
+        
+        if(movie){
+            //title director duration genre description
+            if(title){
+                if(typeof title !== "string"){
+                    return res.status(400).json({
+                        message: 'El titulo debe ser un string'
+                    });
+                };
+            };
+
+            if(director){
+                if(typeof director !== "string"){
+                    return res.status(400).json({
+                        message: 'Director debe ser de tipo string'
+                    });
+                };
+            };
+
+            if(duration){
+                if(typeof duration !== "number"){
+                    return res.status(400).json({
+                        message: 'Duration debe ser un numero'
+                    });
+                };
+            };
+
+            if(genre){
+                if(typeof genre !== "string"){
+                    return res.status(400).json({
+                        message: 'Genre debe ser un string'
+                    });
+                };
+            };
+
+            if(description){
+                if(typeof description !== "string"){
+                    return res.status(400).json({
+                        message: 'Description debe ser un string'
+                    });
+                };
+            };
+
+
+
+
+
+            await Movie.update(req.body);
+            res.status(200).json({
+                messsage: 'Pelicula actualizada',
+                movie
+            });
+        }
     } catch (err) {
         console.error('Error interno del servidor al intentar actualizar un personaje')
         return res.status(500).json({
