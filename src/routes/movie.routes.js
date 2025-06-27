@@ -1,4 +1,4 @@
-import { Router } from 'sequelize'
+import { Router } from 'express';
 import {
     createMovie,
     getAllMovies,
@@ -9,10 +9,10 @@ import {
 
 const movieRoutes = Router();
 
-movieRoutes.post('/api/movie',createMovie);
-movieRoutes.get('/api/movie',getAllMovies);
-movieRoutes.get('/api/movie/:id',getOneMovie);
-movieRoutes.put('/api/movie/:id',updateMovie);
-movieRoutes.delete('/api/movie/:id',deleteMovie);
+movieRoutes.post('/api/movies',createMovie);
+movieRoutes.get('/api/movies',getAllMovies);
+movieRoutes.get('/api/movies/:id',getOneMovie);
+movieRoutes.put('/api/movies/:id',updateMovie);
+movieRoutes.delete('/api/movies/:id',deleteMovie);
 
 export default movieRoutes;

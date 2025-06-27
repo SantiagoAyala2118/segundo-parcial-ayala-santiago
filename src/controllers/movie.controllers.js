@@ -61,18 +61,20 @@ export const createMovie = async (req, res) => {
 
 
 
-export const getAllMoviesMovie = async (req, res) => {
+export const getAllMovies = async (req, res) => {
     try {
-        const movie = Movie.findAll(req.body);
-        if(movie){
+        const movie =await Movie.findAll();
+        if(movie.length>0){
             return res.status(200).json({
                 message: 'Peliculas encontradas',
                 movie
             });
+        }else{
+            return res.status(404).json({
+                message: 'No hay peliculas en la base de datos'
+            });
+
         };
-        return res.status(404).json({
-            message: 'No hay peliculas en la base de datos'
-        });
     } catch (err) {
         console.error('Error interno del servidor al intentar traer los personajes')
         return res.status(500).json({
@@ -188,7 +190,7 @@ export const deleteMovie = async (req, res) => {
         const { id } = req.params.id;
         const movie = await Movie.findByPk(id);
         if(movie){
-            await Movie.destroy({
+            await Movie.destroy(req.body,{
                 where : {
                     id
                 }
