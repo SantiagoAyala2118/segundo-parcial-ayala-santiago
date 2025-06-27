@@ -63,7 +63,16 @@ export const createMovie = async (req, res) => {
 
 export const getAllMoviesMovie = async (req, res) => {
     try {
-        
+        const movie = Movie.findAll(req.body);
+        if(movie){
+            return res.status(200).json({
+                message: 'Peliculas encontradas',
+                movie
+            });
+        };
+        return res.status(404).json({
+            message: 'No hay peliculas en la base de datos'
+        });
     } catch (err) {
         console.error('Error interno del servidor al intentar traer los personajes')
         return res.status(500).json({
