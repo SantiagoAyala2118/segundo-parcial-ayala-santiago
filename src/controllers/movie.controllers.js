@@ -110,12 +110,23 @@ export const updateMovie = async (req, res) => {
     try {
         const {id} = req.params.id
         const {title, director, duration, genre, description } = req.body;
-        
+
         const movie = await Movie.findByPk(id);
         
         if(movie){
             //title director duration genre description
             if(title){
+                const existingTitle = await Movie.findOne({
+                    where: {
+                        title
+                    }
+                })
+                if(existingTitle){
+                    return res.status(400).json({
+                        message : 'No pueden haber peliulas repetidas'
+                    });
+                };
+
                 if(typeof title !== "string"){
                     return res.status(400).json({
                         message: 'El titulo debe ser un string'
@@ -156,9 +167,6 @@ export const updateMovie = async (req, res) => {
             };
 
 
-
-
-
             await Movie.update(req.body);
             res.status(200).json({
                 messsage: 'Pelicula actualizada',
@@ -177,7 +185,21 @@ export const updateMovie = async (req, res) => {
 
 export const deleteMovie = async (req, res) => {
     try {
-        
+        const { id } = req.params.id;
+        const movie = await Movie.findByPk(id);
+        if(movie){
+            await Movie.destroy({
+                where : {
+                    id
+                }
+            });
+            return res.status(200).json({
+                message: 'Pelicula eliminado'
+            })
+        };
+        return res.status(404).json({
+            message: 'Esa pelicula no existe en la base de datos'
+        })
     } catch (err) {
         console.error('Error interno del servidor al intentar borrar un personaje')
         return res.status(500).json({
