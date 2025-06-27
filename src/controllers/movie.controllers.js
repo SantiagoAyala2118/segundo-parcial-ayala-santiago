@@ -3,13 +3,13 @@ import { Movie } from '../models/movie.model.js';
 export const createMovie = async (req, res) => {
     try {
         const { title, director, duration, genre, description } = req.body;
-        if(!title || !director || !duration || !genre){
+        if (!title || !director || !duration || !genre) {
             return res.status(400).json({
                 message: 'No pueden haber campos nulos'
             });
         };
 
-        if(title==="" || director ==="" || duration==="" || genre===""){
+        if (title === "" || director === "" || duration === "" || genre === "") {
             return res.status(400).json({
                 message: 'Los campos no pueden ser espacion vacíos'
             });
@@ -20,19 +20,19 @@ export const createMovie = async (req, res) => {
                 title
             }
         });
-        if(existingMovie){
+        if (existingMovie) {
             return res.status(400).json({
                 message: 'No pueden haber peliculas repetidas'
             });
         };
 
-        if(typeof title !== "string"){
+        if (typeof title !== "string") {
             return res.status(400).json({
                 message: 'El titulo debe ser un valor string'
             });
         };
 
-        if(typeof director != "string" || typeof genre != "string" || typeof description != 'string'){
+        if (typeof director != "string" || typeof genre != "string" || typeof description != 'string') {
             return res.status(400).json({
                 message: 'Todos los campos excepto duration deben ser de tipo string (character)'
             })
@@ -63,13 +63,13 @@ export const createMovie = async (req, res) => {
 
 export const getAllMovies = async (req, res) => {
     try {
-        const movie =await Movie.findAll();
-        if(movie.length>0){
+        const movie = await Movie.findAll();
+        if (movie.length > 0) {
             return res.status(200).json({
                 message: 'Peliculas encontradas',
                 movie
             });
-        }else{
+        } else {
             return res.status(404).json({
                 message: 'No hay peliculas en la base de datos'
             });
@@ -87,19 +87,25 @@ export const getAllMovies = async (req, res) => {
 
 export const getOneMovie = async (req, res) => {
     try {
-        const {id} = req.params.id;
+        const {id}  = req.params;
+        
         const movie = await Movie.findByPk(id);
-        if(movie){
-            res.status(200).json({
-                message: 'Pelicula encontrado',
+
+        console.log(movie)
+
+        if (movie) {
+            return res.status(200).json({
+                message: 'Pelicula encontrada',
                 movie
             });
+        }
+        else{
+            return res.status(400).json({
+                message: 'Esa pelicula no está en la base de datos'
+            });
         };
-        return res.status(400).json({
-            message: 'Esa pelicula no está en la base de datos'
-        });
     } catch (err) {
-        console.error('Error interno del servidor al intentar traer un personaje')
+        console.error('Error interno del servidor al intentar traer un personaje', err)
         return res.status(500).json({
             message: 'Error del servidor'
         });
@@ -110,58 +116,57 @@ export const getOneMovie = async (req, res) => {
 
 export const updateMovie = async (req, res) => {
     try {
-        const {id} = req.params.id
-        const {title, director, duration, genre, description } = req.body;
+        const { id } = req.params;
+        const { title, director, duration, genre, description } = req.body;
 
         const movie = await Movie.findByPk(id);
-        
-        if(movie){
-            //title director duration genre description
-            if(title){
+
+        if (movie) {
+            if (title) {
                 const existingTitle = await Movie.findOne({
                     where: {
                         title
                     }
                 })
-                if(existingTitle){
+                if (existingTitle) {
                     return res.status(400).json({
-                        message : 'No pueden haber peliulas repetidas'
+                        message: 'No pueden haber peliulas repetidas'
                     });
                 };
 
-                if(typeof title !== "string"){
+                if (typeof title !== "string") {
                     return res.status(400).json({
                         message: 'El titulo debe ser un string'
                     });
                 };
             };
 
-            if(director){
-                if(typeof director !== "string"){
+            if (director) {
+                if (typeof director !== "string") {
                     return res.status(400).json({
                         message: 'Director debe ser de tipo string'
                     });
                 };
             };
 
-            if(duration){
-                if(typeof duration !== "number"){
+            if (duration) {
+                if (typeof duration !== "number") {
                     return res.status(400).json({
                         message: 'Duration debe ser un numero'
                     });
                 };
             };
 
-            if(genre){
-                if(typeof genre !== "string"){
+            if (genre) {
+                if (typeof genre !== "string") {
                     return res.status(400).json({
                         message: 'Genre debe ser un string'
                     });
                 };
             };
 
-            if(description){
-                if(typeof description !== "string"){
+            if (description) {
+                if (typeof description !== "string") {
                     return res.status(400).json({
                         message: 'Description debe ser un string'
                     });
@@ -169,7 +174,13 @@ export const updateMovie = async (req, res) => {
             };
 
 
-            await Movie.update(req.body);
+            await Movie.update({
+                title,
+                director,
+                duration,
+                genre,
+                description
+            });
             res.status(200).json({
                 messsage: 'Pelicula actualizada',
                 movie
@@ -187,16 +198,16 @@ export const updateMovie = async (req, res) => {
 
 export const deleteMovie = async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const { id } = req.params;
         const movie = await Movie.findByPk(id);
-        if(movie){
-            await Movie.destroy(req.body,{
-                where : {
+        if (movie) {
+            await Movie.destroy({
+                where: {
                     id
                 }
             });
             return res.status(200).json({
-                message: 'Pelicula eliminado'
+                message: 'Pelicula eliminada'
             })
         };
         return res.status(404).json({
